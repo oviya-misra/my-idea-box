@@ -20,48 +20,61 @@
    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
  <script>
     // 1. Initialize Supabase (SQL Database)
-    const supabase = supabase.createClient("https://tvloopiijbwwxwrmrxkm.supabase.co", "sb_publishable_K8DmkgBvOXvwQS0os1csZQ_l13y_Bmo");
+// Replace the keys below with your actual ones if they are different
+const supabaseUrl = "https://tvloopiijbwwxwrmrxkm.supabase.co";
+const supabaseKey = "sb_publishable_K8DmkgBvOXvwQS0s1csZQ_l13y_..."; // Use your full key here
+const supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
-    // 2. Initialize EmailJS
-    emailjs.init("grJmOhwQTxCN5Q0zB");
+// 2. Initialize EmailJS
+emailjs.init("grJmOhwQTxCN5Q0zB");
 
-    async function submitData() {
-        // Get values from the form input fields
-        const userEmail = document.getElementById("email").value;
-        const userName = document.getElementById("name").value;
-        const userIdea = document.getElementById("idea").value;
+async function submitData() {
+    // Get values from the form input fields
+    const userEmail = document.getElementById("email").value;
+    const userName = document.getElementById("name").value;
+    const userIdea = document.getElementById("idea").value;
 
-        try {
-            // A. Send the Email via EmailJS
-            await emailjs.send("service_xjyx8mq", "template_8euda9k", {
-                to_name: userName,
-                to_email: userEmail,
-                message: userIdea,
-            });
+    if (!userEmail || !userName || !userIdea) {
+        alert("Please fill in all fields!");
+        return;
+    }
 
-            // B. Save to your Supabase SQL Table
-            const { error } = await supabase
-                .from('submissions')
-                .insert([{ 
+    try {
+        // A. Send the Email via EmailJS
+        await emailjs.send("service_xjyx8mq", "template_8euda9k", {
+            to_name: userName,
+            to_email: userEmail,
+            message: userIdea,
+        });
+
+        // B. Save to your Supabase SQL Table
+        const { error } = await supabase
+            .from('submissions')
+            .insert([
+                { 
                     name: userName, 
                     email: userEmail, 
                     idea: userIdea 
-                }]);
+                }
+            ]);
 
-            if (!error) {
-                alert("Success! Your idea was saved to SQL and the confirmation email was sent.");
-            } else {
-                console.error("SQL Error:", error);
-                alert("Email sent, but there was an error saving to the database.");
-            }
+        if (error) throw error;
 
-        } catch (err) {
-            console.error("System Error:", err);
-            alert("Something went wrong. Please check your internet connection.");
-        }
+        alert("Success! Your idea was saved and email sent.");
+        
+        // Clear the form
+        document.getElementById("email").value = "";
+        document.getElementById("name").value = "";
+        document.getElementById("idea").value = "";
+
+    } catch (err) {
+        console.error("Error:", err);
+        alert("Email sent, but there was an error saving to the database.");
     }
+}
 </script>
 </body>
 </html>
+
 
 
