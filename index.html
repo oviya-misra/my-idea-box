@@ -20,7 +20,7 @@
    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
  <script>
     // 1. Initialize Supabase (SQL Database)
-    const _supabase = supabase.createClient("https://tvloopiijbwwxwrmrxkm.supabase.co", "sb_publishable_K8DmkgBvOXvwQS0os1csZQ_l13y_Bmo");
+    const supabase = supabase.createClient("https://tvloopiijbwwxwrmrxkm.supabase.co", "sb_publishable_K8DmkgBvOXvwQS0os1csZQ_l13y_Bmo");
 
     // 2. Initialize EmailJS
     emailjs.init("grJmOhwQTxCN5Q0zB");
@@ -40,7 +40,7 @@
             });
 
             // B. Save to your Supabase SQL Table
-            const { error } = await _supabase
+            const { error } = await supabase
                 .from('submissions')
                 .insert([{ 
                     name: userName, 
