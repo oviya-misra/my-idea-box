@@ -16,26 +16,52 @@
         <button onclick="submitData()">Submit & Send Email</button>
     </div>
 
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script>
-        (function(){
-            emailjs.init("YOUR_PUBLIC_KEY"); // Replace with your real Key from EmailJS
-        })();
-emailjs.init("grJmOhwQTxCN5Q0zB");
-        function submitData() {
-            const userEmail = document.getElementById("email").value;
-            const userName = document.getElementById("name").value;
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+ <script>
+    // 1. Initialize Supabase (SQL Database)
+    const _supabase = supabase.createClient("https://tvloopiijbwwxwrmrxkm.supabase.co", "sb_publishable_K8DmkgBvOXvwQS0os1csZQ_l13y_Bmo");
 
-            emailjs.send("service_xjyx8mq", "template_8euda9k", {
+    // 2. Initialize EmailJS
+    emailjs.init("grJmOhwQTxCN5Q0zB");
+
+    async function submitData() {
+        // Get values from the form input fields
+        const userEmail = document.getElementById("email").value;
+        const userName = document.getElementById("name").value;
+        const userIdea = document.getElementById("idea").value;
+
+        try {
+            // A. Send the Email via EmailJS
+            await emailjs.send("service_xjyx8mq", "template_8euda9k", {
                 to_name: userName,
                 to_email: userEmail,
-                message: "Success! Your idea has been mentored. Thanks for providing your data!"
-            }).then(() => {
-                alert("Data processed and Thank You email sent!");
+                message: userIdea,
             });
-        }
 
+            // B. Save to your Supabase SQL Table
+            const { error } = await _supabase
+                .from('submissions')
+                .insert([{ 
+                    name: userName, 
+                    email: userEmail, 
+                    idea: userIdea 
+                }]);
+
+            if (!error) {
+                alert("Success! Your idea was saved to SQL and the confirmation email was sent.");
+            } else {
+                console.error("SQL Error:", error);
+                alert("Email sent, but there was an error saving to the database.");
+            }
+
+        } catch (err) {
+            console.error("System Error:", err);
+            alert("Something went wrong. Please check your internet connection.");
+        }
+    }
 </script>
 </body>
 </html>
+
 
