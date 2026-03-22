@@ -23,7 +23,7 @@
 // Replace the keys below with your actual ones if they are different
 const supabaseUrl = "https://tvloopiijbwwxwrmrxkm.supabase.co";
 const supabaseKey = "sb_publishable_K8DmkgBvOXvwQS0s1csZQ_l13y_..."; // Use your full key here
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
 // 2. Initialize EmailJS
 emailjs.init("grJmOhwQTxCN5Q0zB");
@@ -48,7 +48,7 @@ async function submitData() {
         });
 
         // B. Save to your Supabase SQL Table
-        const { error } = await supabase
+        const { error } = await _supabase
             .from('submissions')
             .insert([
                 { 
